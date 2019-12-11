@@ -15,7 +15,8 @@
   <description>Demo project for Spring Boot</description>
 
   <properties>
-    <java.version>1.8</java.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
   </properties>
 
   <dependencies>
@@ -91,7 +92,56 @@
     <!--            <artifactId>spring-security-test</artifactId>-->
     <!--            <scope>test</scope>-->
     <!--        </dependency>-->
+
+    <!-- https://mvnrepository.com/artifact/org.jooq/jooq -->
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+      <version>3.12.3</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.jooq/jooq-codegen -->
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq-codegen</artifactId>
+      <version>3.12.3</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.jooq/jooq-meta -->
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq-meta</artifactId>
+      <version>3.12.3</version>
+    </dependency>
+
+
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>test</id>
+      <properties>
+        <appEnv>test</appEnv>
+        <profiles.active>test</profiles.active>
+        <db.name>movies</db.name>
+        <db.url>jdbc:postgresql://localhost:5432/${db.name}</db.url>
+        <db.user>kneotrino</db.user>
+        <db.password>kneotrino</db.password>
+      </properties>
+    </profile>
+    <profile>
+      <id>prod</id>
+      <properties>
+        <appEnv>prod</appEnv>
+        <profiles.active>prod</profiles.active>
+        <db.name>indo_loan_dev</db.name>
+        <db.url>jdbc:mysql://192.168.8.14/${db.name}</db.url>
+        <db.user>kneotrino</db.user>
+        <db.password>password</db.password>
+      </properties>
+    </profile>
+  </profiles>
+
 
   <build>
     <plugins>
@@ -124,7 +174,61 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+
+      <plugin>
+
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq-codegen-maven</artifactId>
+        <version>3.12.3</version>
+
+        <!-- The plugin should hook into the generate goal -->
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <!-- Manage the plugin's dependency. In this example, we'll use a PostgreSQL database -->
+        <dependencies>
+          <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.4.1212</version>
+          </dependency>
+        </dependencies>
+
+        <configuration>
+
+          <!-- JDBC connection parameters -->
+          <jdbc>
+            <driver>org.postgresql.Driver</driver>
+            <url>jdbc:postgresql://localhost:5432/movies</url>
+            <user>kneotrino</user>
+            <password>kneotrino</password>
+          </jdbc>
+
+          <!-- Generator parameters -->
+          <generator>
+            <database>
+              <name>org.jooq.meta.postgres.PostgresDatabase</name>
+              <includes>.*</includes>
+              <excludes></excludes>
+              <inputSchema>public</inputSchema>
+            </database>
+            <generate>
+              <pojos>true</pojos>
+              <javaTimeTypes>true</javaTimeTypes>
+              <springAnnotations>true</springAnnotations>
+            </generate>
+            <target>
+              <packageName>com.clay7.movies.jooq</packageName>
+              <directory>src/main/java/</directory>
+            </target>
+          </generator>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-
 </project>

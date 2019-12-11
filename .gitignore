@@ -29,3 +29,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### JOOQ ###
+/src/main/java/com/clay7/movies/jooq/
