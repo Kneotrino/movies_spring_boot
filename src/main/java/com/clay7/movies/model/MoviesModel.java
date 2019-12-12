@@ -1,6 +1,6 @@
 package com.clay7.movies.model;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
@@ -17,7 +17,11 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "movie_details")
 @Data
-public class MoviesModel extends AuditBaseModel {
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@With
+public class MoviesModel extends BaseModel {
 
   private static final long serialVersionUID = 564290241;
 
@@ -75,6 +79,5 @@ public class MoviesModel extends AuditBaseModel {
   private BigDecimal budget;
 
   private LocalDate released;
-
 
 }
